@@ -162,7 +162,7 @@ void buscarRota(Rota rota, Lista *ptr){
 			printf("Rota localizada\n");
 			printf("Distância: %d\n", ptr->acm_distancia);
 			printf("Tempo: %d\n", ptr->amc_tempo);
-			printf("Rotas necessárias: %d\n", ptr->cont_rota);
+			printf("Rotas necessárias: %d\n\n", ptr->cont_rota);
 			ptr->cont_rota = 0;
 			ptr->acm_distancia = 0;
 			ptr->amc_tempo = 0;
