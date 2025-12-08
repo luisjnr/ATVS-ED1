@@ -136,12 +136,12 @@ Rota selecionarRota(Lista *ptr){
 void buscarRota(Rota rota, Lista *ptr){
 	do
 	{
-		int flag;
+		int indice;
 		int verificador = 0;
 		for (int i = 0; i < ptr->cont; i++)
 			if (strcmp(rota.origem, ptr->lista[i].origem) == 0)
 			{
-				flag = i;
+				indice = i;
 				verificador = 1;
 				break;
 			}
@@ -153,10 +153,10 @@ void buscarRota(Rota rota, Lista *ptr){
 		else
 		{
 			ptr->cont_rota++;
-			ptr->acm_distancia += ptr->lista[flag].distancia;
-			ptr->amc_tempo += ptr->lista[flag].tempo;
+			ptr->acm_distancia += ptr->lista[indice].distancia;
+			ptr->amc_tempo += ptr->lista[indice].tempo;
 		}
-		if (strcmp(rota.destino, ptr->lista[flag].destino) == 0)
+		if (strcmp(rota.destino, ptr->lista[indice].destino) == 0)
 		{
 			system("clear");
 			printf("Rota localizada\n");
@@ -169,15 +169,12 @@ void buscarRota(Rota rota, Lista *ptr){
 			break;
 		}
 		else 
-		{
-			strcpy(rota.origem, ptr->lista[flag].destino);
-		}
+			strcpy(rota.origem, ptr->lista[indice].destino);
 	} while (1);
 }
 
 int main(){
 	Lista ptr = contagemRota();
-	
 	do
 	{
 		switch (opcao())
