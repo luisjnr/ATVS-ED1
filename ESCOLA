@@ -95,11 +95,10 @@ Aluno dadosAluno(Lista *ptrlista){
 	return novo;
 }
 
-Lista listaAluno(Lista *ptrlista, Aluno dados){
+void listaAluno(Lista *ptrlista, Aluno dados){
 	ptrlista->cad_aluno[ptrlista->cont_aluno] = dados;
 	ptrlista->cont_aluno++;
 	ptrlista->cont_matricula++;
-	return *ptrlista;
 }
 
 int verificadorDisciplina(Lista *ptrlista, Disciplina dados_disciplina, int *flag){
@@ -134,12 +133,11 @@ Disciplina dadosDisciplina(Lista *ptrlista){
 	return novo;
 }
 
-Lista listaDisciplina(Lista *ptrlista, Disciplina dados){
+void listaDisciplina(Lista *ptrlista, Disciplina dados){
 	ptrlista->cad_disciplina[ptrlista->cont_disciplina] = dados;
 	ptrlista->cad_disciplina[ptrlista->cont_disciplina].cont_alunos_disciplina = 0;
 	ptrlista->cont_disciplina++;
 	ptrlista->cont_codigo++; 
-	return *ptrlista;
 }
 
 int buscarAluno(Lista *ptrlista, Aluno dados_aluno, int *posicao){
@@ -160,7 +158,7 @@ Aluno listarAlunos(Lista *ptrlista){
 	system("clear");
 	Aluno dados;
 	do{
-		int posicao = -1;
+		int flag = 1;
 		printf("LISTA DE ALUNOS\n\n");
 		printf("MATRICULA\t\tNOME\n");
 		for (int i = 0; i < ptrlista->cont_aluno; i++)
@@ -169,8 +167,8 @@ Aluno listarAlunos(Lista *ptrlista){
 		printf("\n");
 		printf("Digite o nome do aluno: ");
 		scanf(" %[^\n]s", dados.nome_aluno);
-		buscarAluno(ptrlista, dados, &posicao);
-		if (posicao == -1){
+		verificarAluno(ptrlista, dados, &flag);
+		if (flag){
 			system("clear");
 			printf("Aluno não encontrado!\n");
 			printf("Tente novamente...\n\n");
@@ -184,17 +182,17 @@ Disciplina listarDisciplina(Lista *ptrlista){
 	Disciplina dados;
 	system("clear");
 	do{
-		int posicao = -1;
+		int flag = 1;
 		printf("LISTA DE DISCIPLINAS\n\n");
 		printf("PERIODO\t\tDISCIPLINA\n");
 		for (int i = 0; i < ptrlista->cont_disciplina; i++)
-			printf("%02d\t\t%s\n", ptrlista->cad_disciplina[i].codigo_disciplina, 
+			printf("%02d\t\t%s\n", ptrlista->cad_disciplina[i].periodo, 
 			ptrlista->cad_disciplina[i].nome_disciplina);
 		printf("\n");
 		printf("Digite o nome da disciplina: ");
 		scanf(" %[^\n]s", dados.nome_disciplina);
-		buscarDisciplina(ptrlista, dados, &posicao);
-		if (posicao == -1){
+		verificadorDisciplina(ptrlista, dados, &flag);
+		if (flag){
 			system("clear");
 			printf("Disciplina não encontrada!\n");
 			printf("Tente novamente...\n\n");
@@ -327,16 +325,15 @@ int posicao_disciplina;
 	system("clear");
 }
 
-Lista ordenarDisciplina(Lista *ptrlista){
+void ordenarDisciplina(Lista *ptrlista){
 	for (int i = 0; i < ptrlista->cont_disciplina - 1; i++)
 		for (int j = i + 1; j < ptrlista->cont_disciplina; j++)
-			if (ptrlista->cad_disciplina[i].codigo_disciplina 
-			< ptrlista->cad_disciplina[j].codigo_disciplina){
+			if (ptrlista->cad_disciplina[i].periodo 
+			> ptrlista->cad_disciplina[j].periodo){
 				Disciplina troca = ptrlista->cad_disciplina[i];
 				ptrlista->cad_disciplina[i] = ptrlista->cad_disciplina[j];
 				ptrlista->cad_disciplina[j] = troca;
 			}
-	return *ptrlista;
 }
 
 void historicoAluno(Lista *ptrlista, Aluno dados_aluno){
