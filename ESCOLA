@@ -64,23 +64,21 @@ Lista contadorGeral(){
 	return contador;
 }
 	
-int verificarAluno(Lista *ptrlista, Aluno dados_aluno, int *flag){
+int verificarAluno(Lista *ptrlista, Aluno dados_aluno){
 	for (int i = 0; i < ptrlista->cont_aluno; i++)
 		if (!strcmp(dados_aluno.nome_aluno, ptrlista->cad_aluno[i].nome_aluno))
-			*flag = 0;
-	return *flag;
+			return 0;
+	return 1;
 }
 	
 Aluno dadosAluno(Lista *ptrlista){
 	Aluno novo;
 	system("clear");
 	do{
-		int flag = 1;
 		printf("CADASTRO DO ALUNO\n");
 		printf("Nome: ");
 		scanf(" %[^\n]s", novo.nome_aluno);
-		verificarAluno(ptrlista, novo, &flag);
-		if (!flag)
+		if (!verificarAluno(ptrlista, novo))
 		{
 			system("clear");
 			printf("Aluno já cadastrado!\n");
@@ -101,23 +99,21 @@ void listaAluno(Lista *ptrlista, Aluno dados){
 	ptrlista->cont_matricula++;
 }
 
-int verificadorDisciplina(Lista *ptrlista, Disciplina dados_disciplina, int *flag){
+int verificadorDisciplina(Lista *ptrlista, Disciplina dados_disciplina){
 	for (int i = 0; i < ptrlista->cont_disciplina; i++)
 		if (!strcmp(dados_disciplina.nome_disciplina, ptrlista->cad_disciplina[i].nome_disciplina))
-			*flag = 0;
-	return *flag;
+			return 0;
+	return 1;
 }
 
 Disciplina dadosDisciplina(Lista *ptrlista){
 	Disciplina novo;
 	system("clear");
-	do{	
-		int flag = 1;	
+	do{		
 		printf("CADASTRO DA DISCIPLINA\n");
 		printf("Nome: ");
 		scanf(" %s", novo.nome_disciplina);
-		verificadorDisciplina(ptrlista, novo, &flag);
-		if (!flag){
+		if (!verificadorDisciplina(ptrlista, novo)){
 			system("clear");
 			printf("Disciplina já cadastrada!\n");
 			printf("Tente novamente...\n\n");
@@ -158,7 +154,6 @@ Aluno listarAlunos(Lista *ptrlista){
 	system("clear");
 	Aluno dados;
 	do{
-		int flag = 1;
 		printf("LISTA DE ALUNOS\n\n");
 		printf("MATRICULA\t\tNOME\n");
 		for (int i = 0; i < ptrlista->cont_aluno; i++)
@@ -167,8 +162,7 @@ Aluno listarAlunos(Lista *ptrlista){
 		printf("\n");
 		printf("Digite o nome do aluno: ");
 		scanf(" %[^\n]s", dados.nome_aluno);
-		verificarAluno(ptrlista, dados, &flag);
-		if (flag){
+		if (verificarAluno(ptrlista, dados)){
 			system("clear");
 			printf("Aluno não encontrado!\n");
 			printf("Tente novamente...\n\n");
@@ -182,7 +176,6 @@ Disciplina listarDisciplina(Lista *ptrlista){
 	Disciplina dados;
 	system("clear");
 	do{
-		int flag = 1;
 		printf("LISTA DE DISCIPLINAS\n\n");
 		printf("PERIODO\t\tDISCIPLINA\n");
 		for (int i = 0; i < ptrlista->cont_disciplina; i++)
@@ -191,8 +184,7 @@ Disciplina listarDisciplina(Lista *ptrlista){
 		printf("\n");
 		printf("Digite o nome da disciplina: ");
 		scanf(" %[^\n]s", dados.nome_disciplina);
-		verificadorDisciplina(ptrlista, dados, &flag);
-		if (flag){
+		if (verificadorDisciplina(ptrlista, dados)){
 			system("clear");
 			printf("Disciplina não encontrada!\n");
 			printf("Tente novamente...\n\n");
