@@ -203,9 +203,7 @@ Disciplina listarDisciplina(Lista *ptrlista){
 	}while(1);
 }
 
-Lista matricularDisciplina(Lista *ptrlista, Aluno dados_aluno, Disciplina dados_disciplina){
-	if (!ptrlista->cont_aluno || !ptrlista->cont_disciplina)
-		return *ptrlista;
+void matricularDisciplina(Lista *ptrlista, Aluno dados_aluno, Disciplina dados_disciplina){
 	int posicao_aluno;	
 	int posicao_disciplina;
 	int flag = 0;
@@ -221,12 +219,10 @@ Lista matricularDisciplina(Lista *ptrlista, Aluno dados_aluno, Disciplina dados_
 		ptrlista->cad_disciplina[posicao_disciplina].cont_alunos_disciplina++;
 		system("clear");
 		printf("Aluno matriculado com sucesso!\n\n");
-		return *ptrlista;
 	}
 	else{
 		system("clear");
 		printf("O Aluno já possui matricula nessa disciplina!\n\n");
-		return *ptrlista;
 	}
 }
 
@@ -237,7 +233,7 @@ int buscarAlunoCodigo(Lista *ptrlista, int codigo, int *posicao){
 	return *posicao;
 }
 
-Lista excluirAluno(Lista *ptrlista, Disciplina dados_disciplina){
+void excluirAluno(Lista *ptrlista, Disciplina dados_disciplina){
 	int posicao_disciplina;
 	Aluno dados_aluno;
 	buscarDisciplina(ptrlista, dados_disciplina, &posicao_disciplina);
@@ -245,7 +241,7 @@ Lista excluirAluno(Lista *ptrlista, Disciplina dados_disciplina){
 	if (!ptrlista->cad_disciplina[posicao_disciplina].cont_alunos_disciplina){
 		system("clear");
 		printf("Não existem alunos nessa disciplina!\n\n");
-		return *ptrlista; 
+		return;
 	}
 	system("clear");
 	do{
@@ -284,10 +280,9 @@ Lista excluirAluno(Lista *ptrlista, Disciplina dados_disciplina){
 	ptrlista->cad_disciplina[posicao_disciplina].cont_alunos_disciplina--;
 	system("clear");
 	printf("Aluno excluido com sucesso!\n\n");
-	return *ptrlista;
 }	
 
-Lista ordenarAluno(Lista *ptrlista){
+void ordenarAluno(Lista *ptrlista){
 	for (int i = 0; i < ptrlista->cont_aluno - 1; i++)
 		for (int j = i + 1; j < ptrlista->cont_aluno; j++)
 			if (strcmp(ptrlista->cad_aluno[i].nome_aluno, 
@@ -296,7 +291,6 @@ Lista ordenarAluno(Lista *ptrlista){
 				ptrlista->cad_aluno[i] = ptrlista->cad_aluno[j];
 				ptrlista->cad_aluno[j] = troca;
 			}
-	return *ptrlista;
 }
 
 void chamadaDisciplina(Lista *ptrlista, Disciplina dados_disciplina){
