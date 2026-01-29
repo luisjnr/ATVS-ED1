@@ -106,7 +106,7 @@ void jogo(Jogador *dados){
 		scanf(" %d", &resultado);
 		while(getchar() != '\n');
 		
-		if ((a/100) * b == resultado){
+		if (a + b == resultado){
 			system("clear");
 			printf("Acertou!\n");
 			i++;
@@ -189,11 +189,11 @@ void jogo(Jogador *dados){
 	do{
 		int a = 1 + rand() % 100, b = 1 + rand() % 100, resultado;
 		printf("Jogo da porcentagem %d/2\n", i + 1); 
-		printf("%d %% %d = ", a, b);
+		printf("%d%% de %d = ", a, b);
 		scanf(" %d", &resultado);
 		while(getchar() != '\n');
 		
-		if (a % b == resultado){
+		if ((a/100) * b == resultado){
 			system("clear");
 			printf("Acertou!\n");
 			i++;
