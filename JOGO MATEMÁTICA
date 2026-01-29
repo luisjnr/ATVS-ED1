@@ -106,7 +106,7 @@ void jogo(Jogador *dados){
 		scanf(" %d", &resultado);
 		while(getchar() != '\n');
 		
-		if (a + b == resultado){
+		if ((a/100) * b == resultado){
 			system("clear");
 			printf("Acertou!\n");
 			i++;
