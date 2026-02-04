@@ -200,7 +200,7 @@ void excluirCarro(FILE *arquivo, char frase[]){
 		fwrite(dados, (n - 1) * sizeof(Estacionamento), 1, arquivo);
 		fflush(arquivo);
 		printf("Veículo excluido com sucesso!\n");
-		verificador("");
+		verificador("\n");
 	}
 }
 
