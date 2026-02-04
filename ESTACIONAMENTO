@@ -11,9 +11,19 @@ typedef struct{
 	int flag;
 }Estacionamento;
 
+FILE* abrirArquivo(char nome[]){
+	FILE *arquivo = fopen(nome, "rb+");
+	if(!arquivo)
+		arquivo = fopen(nome, "wb+");
+	if(!arquivo)
+		printf("Erro ao abrir arquivo!\n");
+	return arquivo;
+}
+
 int interface(){
 	int opc;
-	printf("1 - Entrada de carro\n" "2 - Saída de carro\n" "3 - Utilização atual\n" "4 - Encerrar\n");
+	printf("1 - Entrada de carro\n" "2 - Saída de carro\n" "3 - Utilização atual\n"
+	"4 - Listar carros\n" "5 - Excluir carro\n" "6 - Encerrar\n");
 	scanf(" %d", &opc);
 	system("clear");
 	return opc;
@@ -25,15 +35,6 @@ void verificador(char frase[]){
 	getchar();
 	while(getchar() != '\n');
 	system("clear");
-}
-
-FILE* abrirArquivo(char nome[]){
-	FILE *arquivo = fopen(nome, "rb+");
-	if(!arquivo)
-		arquivo = fopen(nome, "wb+");
-	if(!arquivo)
-		printf("Erro ao abrir arquivo!\n");
-	return arquivo;
 }
 
 void cadastrarCarro(Estacionamento *dados){
@@ -138,6 +139,71 @@ void utilizacaoAtual(Estacionamento *dados, FILE *arquivo){
 	verificador("\n");
 }
 
+void ordenarEstacionamento(Estacionamento *dados, int n){
+	for (int i = 0; i < n - 1; i++)
+		for (int j = i + 1; j < n; j++)
+			if(strcmp(dados[i].placa, dados[j].placa) > 0){
+				Estacionamento troca = dados[i];
+				dados[i] = dados[j];
+				dados[j] = troca;
+			}
+}
+
+void listarCarro(FILE *arquivo){
+	fseek(arquivo, 0, SEEK_END);
+	int n = ftell(arquivo) / sizeof(Estacionamento);
+	fseek(arquivo, 0, SEEK_SET);
+	Estacionamento dados[n];
+	fread(dados, n * sizeof(Estacionamento), 1, arquivo);
+	ordenarEstacionamento(dados, n);
+	fseek(arquivo, 0, SEEK_SET);
+	fwrite(dados, n * sizeof(Estacionamento), 1, arquivo);
+	fflush(arquivo);
+	fseek(arquivo, 0, SEEK_SET);
+	while(fread(dados, sizeof(Estacionamento), 1, arquivo)){
+			printf("--------------------------------------------------------------\n"
+			"%s - %s - Proprietário: %s\n" 
+			"--------------------------------------------------------------\n"
+			, dados->placa, dados->modelo, dados->nome);
+	}
+	verificador("\n");
+}
+
+void excluirCarro(FILE *arquivo, char frase[]){
+	char placa[50];
+	printf("===== Exclusão do Estacionamento =====\n\n"
+	"Placa: ");
+	scanf(" %s", placa);
+	for (int i = 0; i < strlen(placa); i++)
+		placa[i] = toupper(placa[i]);
+	int posicao = 0, flag = 0;
+	fseek(arquivo, 0, SEEK_END);
+	int n = ftell(arquivo) / sizeof(Estacionamento);
+	fseek(arquivo, 0, SEEK_SET);
+	Estacionamento dados[n];
+	fread(dados, n * sizeof(Estacionamento), 1, arquivo);
+	for (int i = 0; i < n; i++)
+		if(!strcmp(placa, dados[i].placa)){
+			posicao = i;
+			flag = 1;
+			break;
+		}
+	if (!flag){
+		printf("Placa não encontrada em nosso banco de dados!\n");
+		verificador("\n");
+	}
+	else{	
+		for (int i = posicao; i < n; i++)
+			dados[i] = dados[i + 1];
+		fclose(arquivo);
+		arquivo = fopen(frase, "wb+");
+		fwrite(dados, (n - 1) * sizeof(Estacionamento), 1, arquivo);
+		fflush(arquivo);
+		printf("Veículo excluido com sucesso!\n");
+		verificador("");
+	}
+}
+
 int main(){
 	FILE *arquivo = abrirArquivo("estacionamento.txt");
 	Estacionamento dados;
@@ -153,7 +219,13 @@ int main(){
 			case 3: utilizacaoAtual(&dados, arquivo);
 				break;
 				
-			case 4: printf("Programa finalizado!\n");
+			case 4: listarCarro(arquivo);
+				break;
+				
+			case 5: excluirCarro(arquivo, "estacionamento.txt");
+				break;
+				
+			case 6: printf("Programa finalizado!\n");
 				fclose(arquivo);
 				return 0;
 				break;
