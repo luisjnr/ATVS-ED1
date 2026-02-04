@@ -9,6 +9,7 @@ typedef struct{
 	char modelo[50];
 	char nome[100];
 	int flag;
+	int id;
 }Estacionamento;
 
 FILE* abrirArquivo(char nome[]){
@@ -37,8 +38,13 @@ void verificador(char frase[]){
 	system("clear");
 }
 
-void cadastrarCarro(Estacionamento *dados){
-	printf("--------------------------------------------------------------\n"
+void cadastrarCarro(Estacionamento *dados, FILE *arquivo){
+	int contador = 0;		
+	fseek(arquivo, 0, SEEK_SET);	
+	while(fread(dados, sizeof(Estacionamento), 1, arquivo))
+		contador++;
+	dados->id = contador + 1;
+	printf("-----------------------------------------------------------------------------\n"
 	"Cadastro de novo carro:\n" "Modelo/Cor: ");
 	scanf(" %[^\n]s", dados->modelo);
 	printf("Proprietário: ");
@@ -58,29 +64,29 @@ void entradaCarro(Estacionamento *dados, FILE *arquivo){
 		if(!strcmp(placa, dados->placa)){
 			flag = 1;
 			break;
-		}
+		}	
 	if(!flag){
 		printf("Carro não encontrado na base de dados. Faça o Cadastro:\n\n");
-		cadastrarCarro(dados);
+		cadastrarCarro(dados, arquivo);
 		strcpy(dados->placa, placa);
 		dados->flag = 1;
 		fseek(arquivo, 0, SEEK_END);
 		fwrite(dados, sizeof(Estacionamento), 1, arquivo);
 		fflush(arquivo);
 		verificador("Veículo cadastrado e estacionado com sucesso!\n" 
-		"--------------------------------------------------------------\n");
+		"-----------------------------------------------------------------------------\n");
 	}
 	else{
-		printf("--------------------------------------------------------------\n"
-		"Veículo:\n" "Placa: %s\n" "Modelo/Cor: %s\n"
-		"Proprietário: %s\n", dados->placa, dados->modelo, dados->nome);
+		printf("-----------------------------------------------------------------------------\n"
+		"Veículo:\n" "Id: %02d\n" "Placa: %s\n" "Modelo/Cor: %s\n"
+		"Proprietário: %s\n", dados->id, dados->placa, dados->modelo, dados->nome);
 		if(!dados->flag){
 			dados->flag = 1;
 			fseek(arquivo, -sizeof(Estacionamento), SEEK_CUR);
 			fwrite(dados, sizeof(Estacionamento), 1, arquivo);
 			fflush(arquivo);
 			verificador("Veículo estacionado com sucesso!\n"
-			"--------------------------------------------------------------\n");
+			"-----------------------------------------------------------------------------\n");
 		}	
 		else
 			verificador("Veículo já está estacionado!");
@@ -104,12 +110,12 @@ void saidaCarro(Estacionamento *dados, FILE *arquivo){
 	if(!flag)
 		verificador("O Veículo não está devidamente cadastrado!\n");
 	else{
-		printf("--------------------------------------------------------------\n"
-		"Veículo:\n" "Placa: %s\n" "Modelo/Cor: %s\n"
-		"Proprietário: %s\n", dados->placa, dados->modelo, dados->nome);
+		printf("-----------------------------------------------------------------------------\n"
+		"Veículo:\n" "Id: %02d\n" "Placa: %s\n" "Modelo/Cor: %s\n"
+		"Proprietário: %s\n", dados->id, dados->placa, dados->modelo, dados->nome);
 		if (!dados->flag){
 			verificador("Veículo não está estacionado!\n" 
-			"--------------------------------------------------------------\n");
+			"-----------------------------------------------------------------------------\n");
 		}	
 		else{
 			dados->flag = 0;
@@ -117,7 +123,7 @@ void saidaCarro(Estacionamento *dados, FILE *arquivo){
 			fwrite(dados, sizeof(Estacionamento), 1, arquivo);
 			fflush(arquivo);
 			verificador("Saída do veículo confirmada!\n" 
-			"--------------------------------------------------------------\n");
+			"-----------------------------------------------------------------------------\n");
 		}
 	}
 }
@@ -129,12 +135,12 @@ void utilizacaoAtual(Estacionamento *dados, FILE *arquivo){
 	while(fread(dados, sizeof(Estacionamento), 1, arquivo))
 		if(dados->flag){
 			contador++;
-			printf("--------------------------------------------------------------\n"
-			"%s - %s - Proprietário: %s\n"
-			, dados->placa, dados->modelo, dados->nome);
+			printf("-----------------------------------------------------------------------------\n"
+			"Id: %d - Placa: %s - Modelo/Cor: %s - Proprietário: %s\n"
+			, dados->id, dados->placa, dados->modelo, dados->nome);
 		}
 		
-	printf("--------------------------------------------------------------\n"
+	printf("-----------------------------------------------------------------------------\n"
 	"%d veículo(s) estacionado(s)\n", contador);
 	verificador("\n");
 }
@@ -142,7 +148,7 @@ void utilizacaoAtual(Estacionamento *dados, FILE *arquivo){
 void ordenarEstacionamento(Estacionamento *dados, int n){
 	for (int i = 0; i < n - 1; i++)
 		for (int j = i + 1; j < n; j++)
-			if(strcmp(dados[i].placa, dados[j].placa) > 0){
+			if(dados[i].id > dados[j].id){
 				Estacionamento troca = dados[i];
 				dados[i] = dados[j];
 				dados[j] = troca;
@@ -161,10 +167,10 @@ void listarCarro(FILE *arquivo){
 	fflush(arquivo);
 	fseek(arquivo, 0, SEEK_SET);
 	while(fread(dados, sizeof(Estacionamento), 1, arquivo)){
-			printf("--------------------------------------------------------------\n"
-			"%s - %s - Proprietário: %s\n" 
-			"--------------------------------------------------------------\n"
-			, dados->placa, dados->modelo, dados->nome);
+			printf("-----------------------------------------------------------------------------\n"
+			"Id: %02d - Placa: %s - Modelo/Cor %s - Proprietário: %s\n" 
+			"-----------------------------------------------------------------------------\n"
+			, dados->id, dados->placa, dados->modelo, dados->nome);
 	}
 	verificador("\n");
 }
@@ -193,8 +199,10 @@ void excluirCarro(FILE *arquivo, char frase[]){
 		verificador("\n");
 	}
 	else{	
-		for (int i = posicao; i < n; i++)
+		for (int i = posicao; i < n; i++){
 			dados[i] = dados[i + 1];
+			dados[i].id--;
+		}	
 		fclose(arquivo);
 		arquivo = fopen(frase, "wb+");
 		fwrite(dados, (n - 1) * sizeof(Estacionamento), 1, arquivo);
